@@ -11,7 +11,7 @@ from uuid import uuid4
 
 
 # Configs
-NUM_PAGES = 5000  # 10 for refreshing current pages - e.g. viewcounts, comments, etc; > 5000 total number of pages as of 2017-10-24
+NUM_PAGES = 5  # 10 for refreshing current pages - e.g. viewcounts, comments, etc; > 5000 total number of pages as of 2017-10-24
 URLS = ["http://www.zerohedge.com/"] + ["http://www.zerohedge.com/?page={}".format(_) for _ in range(1, NUM_PAGES)]
 OUT_PATH = "../data/staging/"
 
@@ -31,7 +31,7 @@ def run_spider(urls=URLS, out_path=OUT_PATH):
             outf = str(uuid4())  # random file name
             try:
                 data = future.result().encode("utf-8")
-                with open(out_path + "zh_html_page_{}".format(outf), "w") as f:
+                with open(out_path + outf, "w") as f:
                     f.write(str(data))
             except Exception as e:
                 print('{} generated an exception: {}'.format(url, e))
