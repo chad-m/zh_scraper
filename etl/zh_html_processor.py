@@ -191,20 +191,8 @@ def output_processed_articles(processed_articles, out_file):
             f.write("\n")
 
 
-# def process_html_files(list_of_file_paths, out_file=OUT_FILE): # USED FOR TESTING ONLY
-    # # !!! This needs to be asyncronous !!!
-    # print("Processing zh files...")
-    # # Process zh html files, append article data to out file, and delete raw file from staging area
-    # for _ in list_of_file_paths:
-    #     print("Processing file: {}".format(_))
-    #     tmp_processed_articles = process_html_file(file_to_process=_)
-    #     output_processed_articles(processed_articles=tmp_processed_articles, out_file=out_file)
-    #     # delete_raw_file(file_to_delete=_)  # ONLY USE THIS AFTER TESTING
-    # print("Finished processing zh files.")
-
-
 def process_html_files(list_of_file_paths, out_file=OUT_FILE):
-    # Process list of zh page paths (multithreaded)
+    # Process list of zh page pages (multithreaded)
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         future_to_url = {executor.submit(process_html_file, _): _ for _ in list_of_file_paths}
         for future in concurrent.futures.as_completed(future_to_url):
