@@ -7,6 +7,7 @@
 
 # Imports
 import bs4
+import concurrent.futures
 import json
 from pathlib import Path
 import requests
@@ -17,32 +18,32 @@ DATA_PATH = "../data/staging"
 OUT_FILE = "../data/processed/processed_articles"
 
 
-def get_html_file_paths(folder_path=DATA_PATH, file_regex="*-*-*"):
+def get_html_file_paths(data_path=DATA_PATH, file_regex="*-*-*"):
     """
     Searches given folder path for raw zh html pages and returns file paths
 
     Params:
     -------
-    folder_path (string): string of file path where html pages are stored
-    file_regex (string): regular expression for files in folder_path
+    data_path (string): string of file path where html pages are stored
+    file_regex (string): regular expression for files in data_path
 
     Returns:
     --------
     file_paths (list: string): list of file paths for zh html pages
 
     """
-    list_of_file_paths = list(Path(folder_path).glob(file_regex))
+    list_of_file_paths = list(Path(data_path).glob(file_regex))
     file_paths = [str(_) for _ in list_of_file_paths]
     if file_paths:
         return file_paths
     else:
-        print("No files in data folder. Check data folder. Exiting...")
+        print("No files found in data folder. Check data folder: {}. Exiting...".format(data_path))
         exit()
 
 
 def extract_articles_from_file(raw_html):
     """
-    Extracts list of articles from zh page html
+    Extracts list of articles from a single zh page
 
     Params:
     -------
@@ -59,8 +60,7 @@ def extract_articles_from_file(raw_html):
     if article_list:
         return article_list
     else:
-        print("No articles found. Check input file and BeautifulSoup query")
-        exit()
+        print("No articles found. Check input file and BeautifulSoup query. Skipping...")
 
 
 def extract_article_id(article):
@@ -101,6 +101,8 @@ def extract_article_views_count(article_id):
     article_views_data (int): count of times article has been viewed
 
     """
+    # Check article_id
+    assert isinstance(article_id, str), "article_id not type string. type is: {}".format(type(article_id))
     try:
         # Requires an additional HTTP GET requests using entityid as query arg.
         url = "http://counter.zerohedge.com/views?type=node&id=" + article_id
@@ -108,8 +110,7 @@ def extract_article_views_count(article_id):
         tmp_data = resp.json()
         return tmp_data["entityStats"]["count"]
     except Exception as e:
-        print("Article {} generated an exception: {}".format(article_id, e))
-        print("Returning: NaN")
+        print("Article {} generated an exception: {}. Returning NaN".format(article_id, e))
         return "NaN"
 
 
@@ -143,7 +144,11 @@ def extract_data_from_article(article, filters=[
     """
     article_data = {}
     for _ in filters:
-        article_data[_.__name__.replace("extract_", "")] = _(article)
+        tmp_key = _.__name__.replace("extract_", "")
+        if "views_count" in tmp_key:
+            article_data[tmp_key] = _(article_data["article_id"])
+        else:
+            article_data[tmp_key] = _(article)
     return article_data
 
 
@@ -180,32 +185,42 @@ def output_processed_articles(processed_articles, out_file):
     (None): appends each article in list to the given output file
 
     """
-    # note: if file note created, create then append
     with open(out_file, "a") as f:
         for _ in processed_articles:
             f.write(json.dumps(_))
             f.write("\n")
 
 
-# def delete_raw_file(raw_file):  # ONLY USE THIS AFTER TESTING
-#     print("delete_raw_file not yet implemented")
-#     exit()
+# def process_html_files(list_of_file_paths, out_file=OUT_FILE): # USED FOR TESTING ONLY
+    # # !!! This needs to be asyncronous !!!
+    # print("Processing zh files...")
+    # # Process zh html files, append article data to out file, and delete raw file from staging area
+    # for _ in list_of_file_paths:
+    #     print("Processing file: {}".format(_))
+    #     tmp_processed_articles = process_html_file(file_to_process=_)
+    #     output_processed_articles(processed_articles=tmp_processed_articles, out_file=out_file)
+    #     # delete_raw_file(file_to_delete=_)  # ONLY USE THIS AFTER TESTING
+    # print("Finished processing zh files.")
 
 
 def process_html_files(list_of_file_paths, out_file=OUT_FILE):
-    # !!! This needs to be asyncronous !!!
-    print("Processing zh files...")
-    # Process zh html files, append article data to out file, and delete raw file from staging area
-    for _ in list_of_file_paths:
-        print("Processing file: {}".format(_))
-        tmp_processed_articles = process_html_file(file_to_process=_)
-        output_processed_articles(processed_articles=tmp_processed_articles, out_file=out_file)
-        # delete_raw_file(file_to_delete=_)  # ONLY USE THIS AFTER TESTING
-    print("Finished processing zh files.")
+    # Process list of zh page paths (multithreaded)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        future_to_url = {executor.submit(process_html_file, _): _ for _ in list_of_file_paths}
+        for future in concurrent.futures.as_completed(future_to_url):
+            url = future_to_url[future]
+            try:
+                tmp_processed_articles = future.result()
+                output_processed_articles(processed_articles=tmp_processed_articles, out_file=OUT_FILE)
+                # delete file - note: will be implemented at later date
+            except Exception as e:
+                print('{} generated an exception: {}'.format(url, e))
+            else:
+                print('{} page processed.'.format(url))
 
 
 def main():
-    zh_html_file_paths = get_html_file_paths(folder_path=DATA_PATH)
+    zh_html_file_paths = get_html_file_paths(data_path=DATA_PATH)
     process_html_files(list_of_file_paths=zh_html_file_paths, out_file=OUT_FILE)
 
 
