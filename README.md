@@ -1,2 +1,2 @@
-# zh_app
-Application to collect article data from zerohedge.com and display sentiment, attention, and topics.
+# Async web scraper for Zerohedge.com
+ETL code to asynchronously scrape zerohedge.com and process raw html pages.
