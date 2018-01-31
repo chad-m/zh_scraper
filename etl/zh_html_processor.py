@@ -56,7 +56,7 @@ def extract_articles_from_file(raw_html):
 
     """
     soup = bs4.BeautifulSoup(raw_html)
-    article_list = soup.find("section", {"class": "article-list"}).findAll("article")
+    article_list = soup.find("div", {"id": "block-zerohedge-content"}).findAll("article")
     if article_list:
         return article_list
     else:
