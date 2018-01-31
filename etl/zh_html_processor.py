@@ -14,8 +14,8 @@ import requests
 
 
 # CONFIGS
-DATA_PATH = "../data/staging"
-OUT_FILE = "../data/processed/processed_articles"
+DATA_PATH = "/home/ec2-user/zh_scraper/data/staging/"
+OUT_FILE =  "/home/ec2-user/zh_scraper/data/processed/processed_articles"
 
 
 def get_html_file_paths(data_path=DATA_PATH, file_regex="*-*-*"):
