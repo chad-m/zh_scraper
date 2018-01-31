@@ -13,7 +13,7 @@ from uuid import uuid4
 # Configs
 NUM_PAGES = 5  # 10 for refreshing current pages - e.g. viewcounts, comments, etc; > 5000 total number of pages as of 2017-10-24
 URLS = ["http://www.zerohedge.com/"] + ["http://www.zerohedge.com/?page={}".format(_) for _ in range(1, NUM_PAGES)]
-OUT_PATH = "../data/staging/"
+OUT_PATH = "/home/ec2-user/zh_scraper/data/staging/"
 
 
 def load_url(url):
