@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# Bash script to run both zh etl scripts
+echo "Running zh_spider.py"
+/usr/bin/python3 zh_spider.py;
+
+echo ; echo "Running zh_html_processor.py"
+/usr/bin/python3 zh_html_processor.py
