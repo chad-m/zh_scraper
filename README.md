@@ -1,2 +1,3 @@
 # Async web scraper for Zerohedge.com
-ETL code to asynchronously scrape zerohedge.com and process raw html pages.
+
+ETL code to asynchronously scrape zerohedge.com and process raw html pages using concurrent.futures from Python.
