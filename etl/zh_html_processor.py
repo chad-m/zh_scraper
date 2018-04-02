@@ -13,7 +13,10 @@ import json
 import os
 from pathlib import Path
 import requests
+import warnings
 
+# Suppress BeautifulSoup warning
+warnings.filterwarnings("ignore", category=UserWarning, module='bs4')
 
 # CONFIGS
 #DATA_PATH = "/home/ec2-user/zh_scraper/data/staging/"
