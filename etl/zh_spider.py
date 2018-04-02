@@ -27,7 +27,7 @@ def clear_staging_files(staging_path=OUT_PATH):
         pass
 
 
-def run_spider(staging_data_path=OUT_PATH, num_pages=2):
+def main(staging_data_path=OUT_PATH, num_pages=2):
     # Clear previously scraped files
     clear_staging_files(staging_data_path)
 
@@ -51,4 +51,4 @@ def run_spider(staging_data_path=OUT_PATH, num_pages=2):
 
 
 if __name__ == "__main__":
-    run_spider()
+    main()

@@ -24,8 +24,8 @@ def run_etl(num_pages):
     logger.info("Starting ETL process")
 
     # Scrape pages
-    zh_spider.run_spider(out_path=STAGING_DATA_PATH, num_pages=num_pages)
-    logger.info("Completed zh_spider")    
+    zh_spider.main(staging_data_path=STAGING_DATA_PATH, num_pages=num_pages)
+    logger.info("Completed zh_spider")
 
     # Extract data from html pages
     zh_html_processor.main(staging_data_path=DATA_PATH, processed_data_path_and_file=OUT_FILE)
