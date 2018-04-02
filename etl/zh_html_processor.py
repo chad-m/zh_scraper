@@ -222,7 +222,7 @@ def process_html_files(list_of_file_paths, out_file=OUT_FILE):
                 print('{} page processed.'.format(url))
 
 
-def main(staging_data_path=DATA_PATH, processed_data_path_and_file=OUT_FILE):
+def main(staging_data_path=DATA_PATH, processed_data_path=OUT_FILE):
     # Delete previous processed files
     try:
         os.remove(staging_data_path)
@@ -233,7 +233,7 @@ def main(staging_data_path=DATA_PATH, processed_data_path_and_file=OUT_FILE):
     zh_html_file_paths = get_html_file_paths(data_path=staging_data_path)
     
     # Extract and output data from processed html file
-    process_html_files(list_of_file_paths=zh_html_file_paths, out_file=OUT_FILE)
+    process_html_files(list_of_file_paths=zh_html_file_paths, out_file=processed_data_path)
 
 
 if __name__ == "__main__":
