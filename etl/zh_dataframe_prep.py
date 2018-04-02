@@ -20,9 +20,9 @@ INPUT_FILE = "../data/processed/processed_articles"
 OUT_FILE = "../data/processed/master_article_df.csv"
 
 
-def main():
+def main(input_file_path=INPUT_FILE, output_file_path=OUT_FILE):
     # Load processed articles data
-    with open(INPUT_FILE, "r") as f:
+    with open(input_file_path, "r") as f:
         articles_raw = f.read().split("\n")
         articles = []  # list of article dictionaries
         for article in articles_raw:
@@ -46,7 +46,7 @@ def main():
     article_df["article_title_subjectivity"] = article_title_sentiment.map(lambda _: _[1])
 
     # Output to csv
-    article_df.to_csv(OUT_FILE, index=False)
+    article_df.to_csv(output_file_path, index=False)
 
 
 if __name__ == "__main__":
