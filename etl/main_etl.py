@@ -28,7 +28,7 @@ def run_etl(num_pages):
     logger.info("Completed zh_spider")    
 
     # Extract data from html pages
-    zh_html_processor.main()
+    zh_html_processor.main(staging_data_path=DATA_PATH, processed_data_path_and_file=OUT_FILE)
     logger.info("Completed zh_html_processor")
 
     zh_dataframe_prep.main()

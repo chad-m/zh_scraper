@@ -27,9 +27,9 @@ def clear_staging_files(staging_path=OUT_PATH):
         pass
 
 
-def run_spider(out_path=OUT_PATH, num_pages=2):
+def run_spider(staging_data_path=OUT_PATH, num_pages=2):
     # Clear previously scraped files
-    clear_staging_files(out_path)
+    clear_staging_files(staging_data_path)
 
     # Build urls - max number > 5000
     urls = ["http://www.zerohedge.com/"] + ["http://www.zerohedge.com/?page={}".format(_) for _ in range(1, num_pages)]
@@ -42,7 +42,7 @@ def run_spider(out_path=OUT_PATH, num_pages=2):
             outf = str(uuid4())  # random file name
             try:
                 data = future.result().encode("utf-8")
-                with open(out_path + outf, "w") as f:
+                with open(staging_data_path + outf, "w") as f:
                     f.write(str(data))
             except Exception as e:
                 print('{} generated an exception: {}'.format(url, e))

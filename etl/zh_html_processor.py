@@ -9,6 +9,7 @@
 import bs4
 import concurrent.futures
 import json
+import os
 from pathlib import Path
 import requests
 
