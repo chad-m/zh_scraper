@@ -221,15 +221,15 @@ def process_html_files(list_of_file_paths, out_file=OUT_FILE):
                 print('{} page processed.'.format(url))
 
 
-def main():
+def main(staging_data_path=DATA_PATH, processed_data_path_and_file=OUT_FILE):
     # Delete previous processed files
     try:
-        os.remove(OUT_FILE)
+        os.remove(staging_data_path)
     except Exception as e:
         pass
 
     # Load paths of scraped html files
-    zh_html_file_paths = get_html_file_paths(data_path=DATA_PATH)
+    zh_html_file_paths = get_html_file_paths(data_path=staging_data_path)
     
     # Extract and output data from processed html file
     process_html_files(list_of_file_paths=zh_html_file_paths, out_file=OUT_FILE)

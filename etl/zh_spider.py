@@ -11,8 +11,6 @@ from uuid import uuid4
 
 
 # Configs
-NUM_PAGES = 50  # 10 for refreshing current pages - e.g. viewcounts, comments, etc; > 5000 total number of pages as of 2017-10-24
-URLS = ["http://www.zerohedge.com/"] + ["http://www.zerohedge.com/?page={}".format(_) for _ in range(1, NUM_PAGES)]
 #OUT_PATH = "/home/ec2-user/zh_scraper/data/staging/"
 OUT_PATH = "../data/staging/"
 
@@ -21,8 +19,21 @@ def load_url(url):
     with requests.get(url) as resp:
         return resp.text
 
+def clear_staging_files(staging_path=OUT_PATH):
+    # Delete previous scraped files
+    try:
+        os.remove(staging_path)
+    except Exception as e:
+        pass
 
-def run_spider(urls=URLS, out_path=OUT_PATH):
+
+def run_spider(out_path=OUT_PATH, num_pages=2):
+    # Clear previously scraped files
+    clear_staging_files(out_path)
+
+    # Build urls - max number > 5000
+    urls = ["http://www.zerohedge.com/"] + ["http://www.zerohedge.com/?page={}".format(_) for _ in range(1, num_pages)]
+
     # Writes raw HTML response results to output path (multithreaded)
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         future_to_url = {executor.submit(load_url, url): url for url in urls}
