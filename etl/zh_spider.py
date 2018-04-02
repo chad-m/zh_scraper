@@ -6,6 +6,8 @@
 
 # Imports
 import concurrent.futures
+import glob
+import os
 import requests
 from uuid import uuid4
 
@@ -20,16 +22,19 @@ def load_url(url):
         return resp.text
 
 def clear_staging_files(staging_path=OUT_PATH):
-    # Delete previous scraped files
+    # Delete previous processed files
     try:
-        os.remove(staging_path)
+        files = glob.glob(staging_path + "/*")
+        for f in files:
+            os.remove(f)
     except Exception as e:
+        print(e)
         pass
 
 
 def main(staging_data_path=OUT_PATH, num_pages=2):
     # Clear previously scraped files
-    clear_staging_files(staging_data_path)
+    clear_staging_files(staging_path=staging_data_path)
 
     # Build urls - max number > 5000
     urls = ["http://www.zerohedge.com/"] + ["http://www.zerohedge.com/?page={}".format(_) for _ in range(1, num_pages)]

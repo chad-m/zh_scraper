@@ -224,18 +224,15 @@ def process_html_files(list_of_file_paths, out_file=OUT_FILE):
 
 
 def main(staging_data_path=DATA_PATH, processed_data_path=OUT_FILE):
-    # Delete previous processed files
-    try:
-        files = glob.glob(staging_data_path + "/*")
-        for f in files:
-            os.remove(f)
-    except Exception as e:
-        print(e)
-        pass
-
     # Load paths of scraped html files
     zh_html_file_paths = get_html_file_paths(data_path=staging_data_path)
-    
+
+    # Delete previous processed data
+    try:
+        os.remove(processed_data_path)
+    except Exception as e:
+        pass
+
     # Extract and output data from processed html file
     process_html_files(list_of_file_paths=zh_html_file_paths, out_file=processed_data_path)
 
