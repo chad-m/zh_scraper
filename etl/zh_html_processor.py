@@ -222,10 +222,18 @@ def process_html_files(list_of_file_paths, out_file=OUT_FILE):
 
 
 def main():
+    # Delete previous processed files
+    try:
+        os.remove(OUT_FILE)
+    except Exception as e:
+        pass
+
+    # Load paths of scraped html files
     zh_html_file_paths = get_html_file_paths(data_path=DATA_PATH)
+    
+    # Extract and output data from processed html file
     process_html_files(list_of_file_paths=zh_html_file_paths, out_file=OUT_FILE)
 
 
 if __name__ == "__main__":
     main()
-
