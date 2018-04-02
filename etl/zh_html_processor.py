@@ -8,6 +8,7 @@
 # Imports
 import bs4
 import concurrent.futures
+import glob
 import json
 import os
 from pathlib import Path
@@ -225,8 +226,11 @@ def process_html_files(list_of_file_paths, out_file=OUT_FILE):
 def main(staging_data_path=DATA_PATH, processed_data_path=OUT_FILE):
     # Delete previous processed files
     try:
-        os.remove(staging_data_path)
+        files = glob.glob(staging_data_path + "/*")
+        for f in files:
+            os.remove(f)
     except Exception as e:
+        print(e)
         pass
 
     # Load paths of scraped html files
